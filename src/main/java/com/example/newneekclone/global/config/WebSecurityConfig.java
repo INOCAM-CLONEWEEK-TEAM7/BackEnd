@@ -1,8 +1,8 @@
 package com.example.newneekclone.global.config;
 
-import com.example.newneekclone.global.jwt.JwtAuthenticationFilter;
-import com.example.newneekclone.global.jwt.JwtAuthorizationFilter;
-import com.example.newneekclone.global.jwt.JwtUtil;
+import com.example.newneekclone.global.security.jwt.JwtAuthenticationFilter;
+import com.example.newneekclone.global.security.jwt.JwtAuthorizationFilter;
+import com.example.newneekclone.global.security.jwt.JwtUtil;
 import com.example.newneekclone.global.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
