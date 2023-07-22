@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -57,7 +58,7 @@ public class NewsService {
         if(newsLike.isPresent()){
             news.setLikeCheck(true);
         }else news.setLikeCheck(false);
-        
+
         NewsOneResponsDto responseDto = new NewsOneResponsDto(news);
         return responseDto;
     }
@@ -93,4 +94,20 @@ public class NewsService {
     }
 
     // 검색
+    @Transactional(readOnly = true)
+    public List<NewsResponseDto> getSearch(String q) {
+        List<News> news = newsRepository.findAllByOrderByCreatedDateDesc();
+        List<News> searchNews = new ArrayList<News>();
+        for(int i = 0; i < news.size(); i++){
+            if(news.get(i).getContent().contains(q)){
+                searchNews.add(news.get(i));
+            }
+        }
+        if(searchNews.size()==0)
+            throw new NewsNotFoundException(NOT_FOUND_DATA);
+        List<NewsResponseDto> response = searchNews.stream()
+                .map(NewsResponseDto::new)
+                .collect(Collectors.toList());
+        return response;
+    }
 }

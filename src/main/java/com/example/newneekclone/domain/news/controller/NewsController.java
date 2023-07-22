@@ -62,4 +62,10 @@ public class NewsController {
     }
 
     // 검색
+    @GetMapping("/news/search")
+    public ApiResponse<?> getSearch(@RequestParam String q){
+        log.info("q={}", q);
+        List<NewsResponseDto> data = newsService.getSearch(q);
+        return ResponseUtils.ok(data);
+    }
 }
