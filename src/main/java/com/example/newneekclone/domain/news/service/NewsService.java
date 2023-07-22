@@ -16,13 +16,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.example.newneekclone.global.enums.ErrorCode.*;
-import static com.example.newneekclone.global.enums.SuccessCode.*;
+import static com.example.newneekclone.global.enums.ErrorCode.NOT_FOUND_CLIENT;
+import static com.example.newneekclone.global.enums.ErrorCode.NOT_FOUND_DATA;
+import static com.example.newneekclone.global.enums.SuccessCode.LIKE_CANCEL;
+import static com.example.newneekclone.global.enums.SuccessCode.LIKE_SUCCESS;
 
 @RequiredArgsConstructor
 @Service
