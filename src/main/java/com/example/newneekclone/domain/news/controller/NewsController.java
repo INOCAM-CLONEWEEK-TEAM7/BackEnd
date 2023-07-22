@@ -1,12 +1,15 @@
 package com.example.newneekclone.domain.news.controller;
 
+import com.example.newneekclone.domain.news.daumCrawlingService;
 import com.example.newneekclone.domain.news.dto.NewsResponseDto;
 import com.example.newneekclone.domain.news.service.NewsService;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,6 +20,7 @@ import java.util.List;
 @RequestMapping("/api")
 public class NewsController {
     private final NewsService newsService;
+    private final daumCrawlingService daumCrawlingService;
     // 전체 뉴스 조회
     @GetMapping("/news")
     public ResponseEntity<List<NewsResponseDto>> getNews(){
@@ -27,4 +31,10 @@ public class NewsController {
     // 좋아요 누르기
     // 카테고리별 조회
     // 검색
+
+    @PostMapping("/news")
+    public NewsResponseDto crawling(){
+        daumCrawlingService.allCrwaling();
+        return null;
+    }
 }
