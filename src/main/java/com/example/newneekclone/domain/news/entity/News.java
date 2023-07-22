@@ -1,6 +1,5 @@
 package com.example.newneekclone.domain.news.entity;
 
-import com.example.newneekclone.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
