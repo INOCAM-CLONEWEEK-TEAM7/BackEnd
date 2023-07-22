@@ -44,7 +44,7 @@ public class NewsService {
 
     // 상세 뉴스 조회
     @Transactional(readOnly = true)
-    public NewsOneResponsDto getNewsOne(Long newsId){
+    public NewsOneResponsDto getNewsOne(Long newsId, Long userId){
         News news = newsRepository.findById(newsId).orElseThrow(
                 () -> new NewsNotFoundException(NOT_FOUND_DATA)
         );
@@ -52,6 +52,12 @@ public class NewsService {
         // 뉴스 좋아요 수
         news.setLikeCount(newsLikeRepository.countByNewsId(newsId));
 
+        // 사용자가 해당 기사 좋아요했는지 여부
+        Optional<NewsLike> newsLike = newsLikeRepository.findByNewsIdAndUserId(newsId, userId);
+        if(newsLike.isPresent()){
+            news.setLikeCheck(true);
+        }else news.setLikeCheck(false);
+        
         NewsOneResponsDto responseDto = new NewsOneResponsDto(news);
         return responseDto;
     }

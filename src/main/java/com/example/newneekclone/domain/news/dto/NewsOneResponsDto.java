@@ -9,16 +9,20 @@ import java.time.LocalDateTime;
 public class NewsOneResponsDto {
     private Long newsId;
     private String title;
-    private LocalDateTime createDate;
     private String category;
+    private LocalDateTime createDate;
+    private String tag;
 
     private  int likeCount;
+    private boolean likeCheck;
     public NewsOneResponsDto(News news){
         this.newsId = news.getId();
         this.title = news.getTitle();
         this.createDate = news.getCreatedDate();
         this.category = news.getCategory();
+        this.tag = news.getTags();
         this.likeCount = news.getLikeCount();
+        this.likeCheck = news.getLikeCheck();
     }
 
 }

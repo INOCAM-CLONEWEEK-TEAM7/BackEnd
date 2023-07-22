@@ -43,4 +43,8 @@ public class News{
     public void setLikeCount(int likeCount){
         this.likeCount = likeCount;
     }
+
+    @Transient
+    private boolean likeCheck;
+    public boolean getLikeCheck(){ return this.likeCheck; }
 }
