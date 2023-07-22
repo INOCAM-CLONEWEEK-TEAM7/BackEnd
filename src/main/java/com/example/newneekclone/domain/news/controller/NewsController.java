@@ -1,6 +1,7 @@
 package com.example.newneekclone.domain.news.controller;
 
-import com.example.newneekclone.domain.news.daumCrawlingService;
+//import com.example.newneekclone.domain.news.daumCrawlingService;
+import com.example.newneekclone.domain.news.daumCrawlingServicetow;
 import com.example.newneekclone.domain.news.dto.NewsResponseDto;
 import com.example.newneekclone.domain.news.service.NewsService;
 import lombok.AllArgsConstructor;
@@ -20,7 +21,8 @@ import java.util.List;
 @RequestMapping("/api")
 public class NewsController {
     private final NewsService newsService;
-    private final daumCrawlingService daumCrawlingService;
+//    private final daumCrawlingService daumCrawlingService;
+    private final daumCrawlingServicetow daumCrawlingServicetow;
     // 전체 뉴스 조회
     @GetMapping("/news")
     public ResponseEntity<List<NewsResponseDto>> getNews(){
@@ -34,7 +36,7 @@ public class NewsController {
 
     @PostMapping("/news")
     public NewsResponseDto crawling(){
-        daumCrawlingService.allCrwaling();
+        daumCrawlingServicetow.allCrwaling();
         return null;
     }
 }

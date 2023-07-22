@@ -10,4 +10,10 @@ import java.util.List;
 @Repository
 public interface NewsRepository extends JpaRepository<News, Long> {
     List<News> findAllByOrderByCreatedDateDesc();
+
+    News findByTitle(String title);
+
+    News findByUrl(String link);
+
+    News findByContent(String content);
 }
