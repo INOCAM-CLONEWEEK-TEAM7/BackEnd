@@ -76,7 +76,8 @@ public class WebSecurityConfig {
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
                         .requestMatchers(new AntPathRequestMatcher("/")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/auth/**")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/news", HttpMethod.GET.name())).permitAll()
+//                        .requestMatchers(new AntPathRequestMatcher("/api/news", HttpMethod.GET.name())).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/news/**")).permitAll()
                         .anyRequest().authenticated() // 그 외 요청은 인증 필요
         );
 
