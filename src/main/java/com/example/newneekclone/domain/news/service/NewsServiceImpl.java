@@ -20,7 +20,7 @@ public class NewsServiceImpl implements NewsService{
     @Transactional(readOnly = true)
     @Override
     public List<NewsResponseDto> getNews() {
-        List<News> news = newsRepository.findAllByOrderByCreatedDateDesc();
+        List<News> news = newsRepository.findAllByOrderByDateDesc();
 
         List<NewsResponseDto> response = news.stream()
                 .map(NewsResponseDto::new)

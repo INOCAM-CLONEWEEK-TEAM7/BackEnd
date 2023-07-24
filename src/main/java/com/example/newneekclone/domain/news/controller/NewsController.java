@@ -1,14 +1,12 @@
 package com.example.newneekclone.domain.news.controller;
 
 //import com.example.newneekclone.domain.news.daumCrawlingService;
-import com.example.newneekclone.domain.news.daumCrawlingServicetow;
+import com.example.newneekclone.domain.news.daumCrawlingService;
 import com.example.newneekclone.domain.news.dto.NewsResponseDto;
 import com.example.newneekclone.domain.news.service.NewsService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +20,7 @@ import java.util.List;
 public class NewsController {
     private final NewsService newsService;
 //    private final daumCrawlingService daumCrawlingService;
-    private final daumCrawlingServicetow daumCrawlingServicetow;
+    private final daumCrawlingService daumCrawlingServicetow;
     // 전체 뉴스 조회
     @GetMapping("/news")
     public ResponseEntity<List<NewsResponseDto>> getNews(){

@@ -26,6 +26,15 @@ public class NewsResponseDto {
         this.content = news.getContent();
         this.likes = news.getLikes();
         this.tags = news.getTags();
-        this.date = news.getCreate_date();
+        this.date = news.getDate();
+    }
+
+    public NewsResponseDto(String title, String tags, LocalDateTime localDateTime, String content, String imageUrl, String videoUrl) {
+        this.title = title;
+        this.content = content;
+        this.tags = tags;
+        this.date = localDateTime;
+        this.imageUrl = imageUrl;
+        this.videoUrl = videoUrl;
     }
 }

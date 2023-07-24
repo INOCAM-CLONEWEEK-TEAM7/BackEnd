@@ -1,142 +1,157 @@
-//package com.example.newneekclone.domain.news;
-//
-//import java.util.ArrayList;
-//import java.util.List;
-//import java.util.stream.Collectors;
-//
-//import com.example.newneekclone.domain.news.dto.NewsResponseDto;
-//import com.example.newneekclone.domain.news.dto.TestDto;
-//import com.example.newneekclone.domain.news.entity.News;
-//import com.example.newneekclone.domain.news.repository.NewsRepository;
-//import kr.co.shineware.nlp.komoran.constant.DEFAULT_MODEL;
-//import kr.co.shineware.nlp.komoran.core.Komoran;
-//import kr.co.shineware.nlp.komoran.model.KomoranResult;
-//import kr.co.shineware.nlp.komoran.model.Token;
-//import lombok.RequiredArgsConstructor;
-//import lombok.extern.slf4j.Slf4j;
-//import org.jsoup.Jsoup;
-//import org.jsoup.nodes.Document;
-//import org.jsoup.nodes.Element;
-//import org.jsoup.select.Elements;
-//import org.springframework.context.annotation.Configuration;
-//import org.springframework.scheduling.annotation.EnableScheduling;
-//import org.springframework.stereotype.Service;
-//import org.springframework.transaction.annotation.Transactional;
-//
-//@Slf4j(topic = "daum")
-//@EnableScheduling
-//@Configuration
-//@Service
-//@RequiredArgsConstructor
-//
-//public class daumCrawlingService {
-//    private final NewsRepository newsRepository;
-//
-//    //    @Scheduled(cron = "5 * * * * ?")// 매월 매일 매시 매분 5초에 실행 ("초 분 시 일 월")
-//    // 매시간 1분 10시1분 11시1분
-//    @Transactional
-//    public List<NewsResponseDto> allCrwaling() {
-////        List<String> idList = new ArrayList<>();
-//        List<TestDto> idList=new ArrayList<>();
-//
-//        Komoran komoran = new Komoran(DEFAULT_MODEL.FULL);
-//        //society : 사회, politics : 정치, economic : 경제, foreign : 국제, culture : 문화, entertain : 연예, sports : 스포츠, digital : IT
-//        String[] category = {"society", "politics", "economic", "foreign", "culture", "entertain", "sports", "digital"};
-//        try {
-//            for (int i = 0; i < category.length; i++) {
-//                String param = category[i] + "?page=";
-//                //                TestDto testDto=new TestDto();
-//                String URL = "https://news.daum.net/breakingnews/" + param;
-//                for (int p = 1; p < 3; p++) {
-//                    String params = "" + p;
-//                    Document doc = Jsoup.connect(URL + params).userAgent("Mozilla/5.0").get();
-//                    String check=URL+params;
-//                    Elements links = doc.select("a[href]");
-//
-//                    for (Element link : links) {
-//                        String href = link.attr("href");
-//                        if (href.startsWith("https://v.daum.net/v/")) {
-////                            idList.add(href.substring(21));
-//                            TestDto testDto=new TestDto();
-//                            testDto.setId(href.substring(21));
-//                            testDto.setCategory(category[i]);
-////                            log.info();
-//                            idList.add(testDto);
-//                        }
-//
+package com.example.newneekclone.domain.news;
+
+import com.example.newneekclone.domain.news.dto.NewsResponseDto;
+import com.example.newneekclone.domain.news.entity.News;
+import com.example.newneekclone.domain.news.repository.NewsRepository;
+import kr.co.shineware.nlp.komoran.constant.DEFAULT_MODEL;
+import kr.co.shineware.nlp.komoran.core.Komoran;
+import kr.co.shineware.nlp.komoran.model.KomoranResult;
+import kr.co.shineware.nlp.komoran.model.Token;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Slf4j(topic = "daum")
+@EnableScheduling
+@Configuration
+@Service
+@RequiredArgsConstructor
+public class daumCrawlingService {
+    private final NewsRepository newsRepository;
+//    private final ImagesRepository imagesRepository;
+
+    // 주기적으로 실행되는 스케줄링 메서드
+    @Scheduled(cron = "5 * * * * ?")
+    public void allCrwaling() { //
+        String[] categories = {"society", "politics", "economic", "foreign", "culture", "entertain", "sports", "digital"};
+        String baseURL = "https://news.daum.net/breakingnews/";
+        Komoran komoran = new Komoran(DEFAULT_MODEL.FULL);
+
+//        List<NewsResponseDto> allNews = new ArrayList<>();
+//        List<String> allTag=new ArrayList<>();
+        try {
+            for (String category : categories) {
+                // 각 카테고리별로 페이지 1의 URL을 구성
+                String url = baseURL + category + "?page=1";
+
+                // 페이지의 HTML을 가져옴
+                Document doc = Jsoup.connect(url).get();
+
+                // 기사 제목과 링크를 포함하는 기사 요소를 찾음
+                Elements articleElements = doc.select(".tit_thumb > a.link_txt");
+
+                for (Element article : articleElements) {
+                    String title = article.text();
+                    String link = article.attr("href"); // 링크 추출
+
+                    // 같은 제목, 주소의 뉴스가 이미 데이터베이스에 있는 경우 건너뜀
+                    if (newsRepository.existsByTitleOrUrl(title, link)) {
+                        continue;
+                    }
+
+//                    // 같은 제목의 뉴스가 이미 데이터베이스에 있는 경우 건너뜀
+//                    News existingNewsTitle = newsRepository.findByTitle(title);
+//                    if (existingNewsTitle != null) {
+//                        continue;
 //                    }
 //
-//                }
-////                System.out.println(ca);
-//                idList = idList.stream().distinct().collect(Collectors.toList()); //중복되는 id들 제거
-//            }
-//            //idList<???>
-//            // news_id
-//
-//        } catch (Exception e) {
-//            log.info("크롤링 실패 : " + e);
-//        }
-//        //뉴스 상세조회
-//        try {
-//            // 뉴스를 새로갱신될때
-//            String URL = "https://v.daum.net/v/";
-//            for (int p = 0; p < idList.size(); p++) {
-//                String params = "" + idList.get(p).getId();
-//                //뉴스 아이디들
-//                // 클래스를 한개 만들어서 카테고리하고 아이디
-//                // List<responseDto> = new
-//                log.info(params);//
-//                Document doc = Jsoup.connect(URL + params).userAgent("Mozilla/5.0").get();
-//
-//                Element title = doc.selectFirst("h3.tit_view");
-//                Element img = doc.select("img.thumb_g_article").first();
-//                // 동영상
-//                Element vidio = doc.select("div.vod_player iframe").first();
-//                Elements contents = doc.select("p[dmcf-ptype=general]");
-//                Element date = doc.selectFirst("span.num_date");
-////                String strToAnalyze = "땡큐 포스코 에코프로 동학개미";
-//
-//                KomoranResult analyzeResultList = komoran.analyze(title.text());
-////                System.out.println(analyzeResultList.getPlainText());
-//                log.info("태그 : ");
-//                String allTag = "";
-//                List<Token> tokenList = analyzeResultList.getTokenList();
-//                for (Token token : tokenList) {
-//                    if (token.getMorph().length() > 1 && !token.getMorph().startsWith("ㄹ") && !token.getMorph().startsWith("ㅂ") && !token.getMorph().startsWith("ㄴ")) {
-//                        log.info(token.getMorph());
-//                        allTag += (token.getMorph()+"{^%");
-//
+//                    // 같은 링크의 뉴스가 이미 데이터베이스에 있는 경우 건너뜀
+//                    News existingNewsId = newsRepository.findByUrl(link);newsRepository.existsByContent()
+//                    if (existingNewsId != null) {
+//                        continue;
 //                    }
-//                }
-//                String allContents = "";
-//                List<String> text = new ArrayList<>();
-//                for (Element content : contents) {
-//                    allContents += (content.text() + "{^%");
-////                    text.add(content.text()); // text() 메서드로 태그 안의 텍스트를 추출합니다.
-//                }
-//                log.info(title.text());//제목
-//                log.info(allContents);// 기사내용 한줄한줄 리스트
+
+                    // 뉴스 기사의 상세 내용을 crawlNewsArticle() 메서드를 통해 가져옴
+                    NewsResponseDto newsResponseDto = crawlNewsArticle(link, new News());
+
+//                    // 같은 내용의 뉴스가 이미 데이터베이스에 있는 경우 건너뜀
+                    if (newsRepository.existsByContent(newsResponseDto.getContent())) {
+                        continue;
+                    }
+//                    News existingNewsContent = newsRepository.findByContent(newsResponseDto.getContent());
+//                    if (existingNewsContent != null) {
+//                        continue;
+//                    }
+                    if (newsResponseDto != null) {
+                        // 뉴스 엔티티를 생성하여 데이터베이스에 저장
+
+                        // 문자열 형식의 날짜를 LocalDateTime 객체로 파싱
+                        LocalDateTime localDateTime = newsResponseDto.getDate();
+                        News news = new News(newsResponseDto.getTags(), newsResponseDto.getTitle(), category,
+                                link, newsResponseDto.getContent(), localDateTime, newsResponseDto.getImageUrl(), newsResponseDto.getVideoUrl());
+
+                        newsRepository.save(news);
+//                        allNews.add(newsResponseDto);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 //
-//                if (img != null) {
-//                    log.info(img.attr("src"));//사진 링크
-//                    // Do something with text
-//                } else {
-//                    //이미지 없음
-//                }
-//                if (vidio != null) {
-//                    log.info("https:" + vidio.attr("src"));//사진 링크
-//                    // Do something with text
-//                } else {
-//                    //이미지 없음
-//                }
-//                log.info(date.text() + "\n\n");//날짜
-//                News news = new News(title.text(),idList.get(p).getCategory() , allContents, date.text(), allTag, date.text());
-//                newsRepository.save(news);
-//            }
-//
-//        } catch (Exception e) {
-//            log.info("크롤링 실패 : " + e);
-//        }
-//        return null;
-//    }
-//}
+//        return allNews;
+    }
+
+    // 뉴스 기사 상세 내용을 크롤링하는 메서드
+    public NewsResponseDto crawlNewsArticle(String url, News news) {
+        try {
+            Document doc = Jsoup.connect(url).get();
+
+            // 기사 제목, 날짜, 내용, 이미지, 비디오 링크 등을 가져옴
+            Element titleElement = doc.selectFirst("h3.tit_view");
+            Element dateElement = doc.selectFirst("span.num_date");
+            Elements contentElements = doc.select("p[dmcf-ptype=general]");
+            Element imageElement = doc.select("img.thumb_g_article").first();
+            Element videoElement = doc.select("div.vod_player iframe").first();
+
+            String title = titleElement.text();
+            String date = dateElement.text();
+            String content = contentElements.text();
+            String imageUrl = (imageElement != null) ? imageElement.attr("src") : null;
+            String videoUrl = (videoElement != null) ? "https:" + videoElement.attr("src") : null;
+
+            String allTag = analyzeTags(title);
+
+            // 날짜 형식을 일치시키기 위한 DateTimeFormatter 정의
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy. M. d. H:mm");
+            LocalDateTime localDateTime = LocalDateTime.parse(date, formatter);
+
+            // NewsResponseDto 객체를 생성하여 뉴스 정보를 담아 반환
+//            NewsResponseDto newsResponseDto = new NewsResponseDto(news);
+            return new NewsResponseDto(title, allTag, localDateTime, content, imageUrl, videoUrl);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    // 제목을 형태소 분석하여 태그로 사용
+    public String analyzeTags(String title) {
+        Komoran komoran = new Komoran(DEFAULT_MODEL.FULL);
+        List<String> allTag=new ArrayList<>();
+        KomoranResult analyzeResultList = komoran.analyze(title);
+        List<Token> tokenList =analyzeResultList.getTokenList();
+        for (Token token : tokenList) {
+            if (token.getMorph().length() > 1 && !token.getMorph().startsWith("ㄹ") && !token.getMorph().startsWith("ㅂ") && !token.getMorph().startsWith("ㄴ")) {
+//                log.info(token.getMorph());
+                allTag.add(token.getMorph()+"{^%");
+            }
+        }
+        return allTag.toString();
+    }
+
+}
