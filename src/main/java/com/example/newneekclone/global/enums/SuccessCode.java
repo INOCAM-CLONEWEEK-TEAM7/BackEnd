@@ -10,6 +10,8 @@ import static org.springframework.http.HttpStatus.OK;
 public enum SuccessCode {
     /* 200 OK : 요청이 성공적으로 완료되었다는 의미입니다. */
     USER_LOGIN_SUCCESS(OK, "로그인 성공"),
+    USER_PASSWORD_CHANGE_SUCCESS(OK, "비밀번호 변경 성공"),
+    EMAIL_SEND_SUCCESS(OK, "메일 전송 성공"),
     LIKE_CANCEL(OK, "좋아요 취소"),
     DISLIKE_CANCEL(OK, "싫어요 취소"),
 
