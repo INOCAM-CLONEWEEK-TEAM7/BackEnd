@@ -30,7 +30,10 @@ public class NewsController {
     // 상세 뉴스 조회
     @GetMapping("/news/{newsId}")
     public ApiResponse<?> getNewsOne(@PathVariable("newsId") Long newsId, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        Long userId = userDetails.getUser().getId();
+        Long userId = -1L;
+        if(userDetails != null){
+            userId = userDetails.getUser().getId();
+        }
         log.info("userId={}", userId);
 
         NewsOneResponsDto data = newsService.getNewsOne(newsId, userId);
