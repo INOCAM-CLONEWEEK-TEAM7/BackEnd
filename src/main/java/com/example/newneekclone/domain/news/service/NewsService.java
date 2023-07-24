@@ -36,7 +36,7 @@ public class NewsService {
     // 전체 뉴스 조회
     @Transactional(readOnly = true)
     public List<NewsResponseDto> getNews() {
-        List<News> news = newsRepository.findAllByOrderByCreatedDateDesc();
+        List<News> news = newsRepository.findAllByOrderByDateDesc();
 
         List<NewsResponseDto> response = news.stream()
                 .map(NewsResponseDto::new)
@@ -97,7 +97,7 @@ public class NewsService {
     // 검색
     @Transactional(readOnly = true)
     public List<NewsResponseDto> getSearch(String q) {
-        List<News> news = newsRepository.findAllByOrderByCreatedDateDesc();
+        List<News> news = newsRepository.findAllByOrderByDateDesc();
         List<News> searchNews = new ArrayList<News>();
         for(int i = 0; i < news.size(); i++){
             if(news.get(i).getContent().contains(q)){

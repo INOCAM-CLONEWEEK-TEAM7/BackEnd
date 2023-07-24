@@ -15,14 +15,19 @@ public class NewsOneResponsDto {
 
     private  int likeCount;
     private boolean likeCheck;
+
+    private String imageUrl;
+    private String videoUrl;
     public NewsOneResponsDto(News news){
         this.newsId = news.getId();
         this.title = news.getTitle();
-        this.createDate = news.getCreatedDate();
+        this.createDate = news.getDate();
         this.category = news.getCategory();
         this.tag = news.getTags();
         this.likeCount = news.getLikeCount();
         this.likeCheck = news.getLikeCheck();
+        this.imageUrl = news.getImageUrl();
+        this.videoUrl = news.getVideoUrl();
     }
 
 }

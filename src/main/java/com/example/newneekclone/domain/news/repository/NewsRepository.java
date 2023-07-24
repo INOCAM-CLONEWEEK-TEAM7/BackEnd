@@ -9,7 +9,11 @@ import java.util.List;
 
 @Repository
 public interface NewsRepository extends JpaRepository<News, Long> {
-    List<News> findAllByOrderByCreatedDateDesc();
+    boolean existsByTitleOrUrl(String title, String link);
+    boolean existsByContent(String content);
+
+    List<News> findAllByOrderByDateDesc();
 
     List<News> findByCategory(String category);
+
 }
