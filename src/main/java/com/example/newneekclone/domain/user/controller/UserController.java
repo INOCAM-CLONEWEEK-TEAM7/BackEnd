@@ -18,6 +18,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 
+import static com.example.newneekclone.global.enums.ErrorCode.USER_NOT_FOUND;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -35,11 +37,17 @@ public class UserController {
     @PostMapping("/auth/forgot")
     @ResponseBody
     public ApiResponse<?> sendPasswordMail(@RequestBody EmailRequestDto email) {
+        if (!userService.checkEmail(email.getEmail())) {
+            return ResponseUtils.error(USER_NOT_FOUND);
+        }
+
         EmailMessage emailMessage = EmailMessage.builder()
                 .to(email.getEmail())
                 .subject("비밀번호 변경 안내")
                 .build();
+        
         Map<String, String> map = Collections.singletonMap("email", email.getEmail());
+
         return ResponseUtils.ok(mailService.sendMail(emailMessage, "forgot_password"), map);
     }
 
