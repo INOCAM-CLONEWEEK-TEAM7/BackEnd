@@ -26,9 +26,6 @@ public class News {
     @Column(name = "content", columnDefinition = "TEXT")
     String content;
 
-    @Column(name = "likes")
-    Integer likes;
-
     @Column(name = "tags", columnDefinition = "TEXT")
     String tags;
 
