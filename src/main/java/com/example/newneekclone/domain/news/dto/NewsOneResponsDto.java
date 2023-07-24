@@ -12,6 +12,7 @@ public class NewsOneResponsDto {
     private String category;
     private LocalDateTime createDate;
     private String tag;
+    private String content;
 
     private  int likeCount;
     private boolean likeCheck;
@@ -22,6 +23,7 @@ public class NewsOneResponsDto {
         this.newsId = news.getId();
         this.title = news.getTitle();
         this.createDate = news.getDate();
+        this.content = news.getContent();
         this.category = news.getCategory();
         this.tag = news.getTags();
         this.likeCount = news.getLikeCount();
@@ -30,4 +32,12 @@ public class NewsOneResponsDto {
         this.videoUrl = news.getVideoUrl();
     }
 
+    public NewsOneResponsDto(String title, String allTag, LocalDateTime localDateTime, String content, String imageUrl, String videoUrl) {
+        this.title = title;
+        this.tag = allTag;
+        this.createDate = localDateTime;
+        this.content = content;
+        this.imageUrl = imageUrl;
+        this.videoUrl = videoUrl;
+    }
 }

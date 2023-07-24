@@ -3,6 +3,7 @@ package com.example.newneekclone.domain.news.controller;
 import com.example.newneekclone.domain.news.daumCrawlingService;
 import com.example.newneekclone.domain.news.dto.NewsOneResponsDto;
 import com.example.newneekclone.domain.news.dto.NewsResponseDto;
+import com.example.newneekclone.domain.news.dto.NewsSearchResponseDto;
 import com.example.newneekclone.domain.news.service.NewsService;
 import com.example.newneekclone.global.enums.SuccessCode;
 import com.example.newneekclone.global.responsedto.ApiResponse;
@@ -63,7 +64,7 @@ public class NewsController {
     @GetMapping("/news/search")
     public ApiResponse<?> getSearch(@RequestParam String q){
         log.info("q={}", q);
-        List<NewsResponseDto> data = newsService.getSearch(q);
+        NewsSearchResponseDto data = newsService.getSearch(q);
         return ResponseUtils.ok(data);
     }
 }
