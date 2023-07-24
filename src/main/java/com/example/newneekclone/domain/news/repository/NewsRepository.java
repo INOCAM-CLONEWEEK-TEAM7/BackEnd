@@ -13,8 +13,8 @@ public interface NewsRepository extends JpaRepository<News, Long> {
     boolean existsByTitleOrUrl(String title, String link);
     boolean existsByContent(String content);
 
-    News findByUrl(String link);
 
     News findByTitle(String title);
 
+    News findByUrl(String link);
 }

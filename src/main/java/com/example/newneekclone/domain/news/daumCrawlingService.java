@@ -21,8 +21,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Slf4j(topic = "daum")
 @EnableScheduling
@@ -32,61 +31,57 @@ import java.util.List;
 public class daumCrawlingService {
     private final NewsRepository newsRepository;
 
-    // 주기적으로 실행되는 스케줄링 메서드
-    @Scheduled(cron = "5 * * * * ?")
+    // 주기적으로 실행하는 스케줄링 메서드
+    @Scheduled(cron = "0 * * * * ?") // 매분 마다
     public void allCrwaling() { //
         String[] categories = {"society", "politics", "economic", "foreign", "culture", "entertain", "sports", "digital"};
         String baseURL = "https://news.daum.net/breakingnews/";
 
         try {
-            for (String category : categories) {
-                // 각 카테고리별로 페이지 1의 URL을 구성
-                String url = baseURL + category + "?page=1";
+            for (int page = 1; page <= 1; page++) { // 1~10 페이지
+                for (String category : categories) { // 각 카테고리별로
+                    // 현재 카테고리와 페이지를 사용하여 URL 구성
+                    String url = baseURL + category + "?page=" + page;
 
-                // 페이지의 HTML을 가져옴
-                Document doc = Jsoup.connect(url).get();
+                    // 페이지의 HTML을 가져옴
+                    Document doc = Jsoup.connect(url).get();
 
-                // 기사 제목과 링크를 포함하는 기사 요소를 찾음
-                Elements articleElements = doc.select(".tit_thumb > a.link_txt");
+                    // 기사 제목과 링크를 포함하는 기사 요소를 찾음
+                    Elements articleElements = doc.select(".tit_thumb > a.link_txt");
 
-                for (Element article : articleElements) {
-                    String title = article.text();
-                    String link = article.attr("href"); // 링크 추출
+                    for (Element article : articleElements) {
+                        String title = article.text();
+                        String link = article.attr("href"); // 주소 추출
 
-                    // 같은 제목, 주소의 뉴스가 이미 데이터베이스에 있는 경우 건너뜀
-                    if (newsRepository.existsByTitleOrUrl(title, link)) {
-                        continue;
-                    }
+                        if (newsRepository.existsByTitleOrUrl(title, link)) {
+                            continue;
+                        }
 
-                    // 뉴스 기사의 상세 내용을 crawlNewsArticle() 메서드를 통해 가져옴
-                    NewsResponseDto newsResponseDto = crawlNewsArticle(link, new News());
+                        // 뉴스 기사의 상세 내용을 crawlNewsArticle() 메서드를 통해 가져옴
+                        NewsResponseDto newsResponseDto = crawlNewsArticle(link);
 
-//                    // 같은 내용의 뉴스가 이미 데이터베이스에 있는 경우 건너뜀
-                    if (newsRepository.existsByContent(newsResponseDto.getContent())) {
-                        continue;
-                    }
-                    if (newsResponseDto != null) {
-                        // 뉴스 엔티티를 생성하여 데이터베이스에 저장
+                        // 같은 내용의 뉴스가 이미 데이터베이스에 있는 경우 건너뜀
+                        if (newsRepository.existsByContent(newsResponseDto.getContent())) {
+                            continue;
+                        }
+                        if (newsResponseDto != null) {
+                            // Create the News entity and add it to the list
+                            LocalDateTime localDateTime = newsResponseDto.getDate();
+                            News news = new News(newsResponseDto.getTags(), newsResponseDto.getTitle(), category,
+                                    link, newsResponseDto.getContent(), localDateTime, newsResponseDto.getImageUrl(), newsResponseDto.getVideoUrl());
 
-                        // 문자열 형식의 날짜를 LocalDateTime 객체로 파싱
-                        LocalDateTime localDateTime = newsResponseDto.getDate();
-                        News news = new News(newsResponseDto.getTags(), newsResponseDto.getTitle(), category,
-                                link, newsResponseDto.getContent(), localDateTime, newsResponseDto.getImageUrl(), newsResponseDto.getVideoUrl());
-
-                        newsRepository.save(news);
-//                        allNews.add(newsResponseDto);
+                            newsRepository.save(news);
+                        }
                     }
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-//
-//        return allNews;
     }
 
     // 뉴스 기사 상세 내용을 크롤링하는 메서드
-    public NewsResponseDto crawlNewsArticle(String url, News news) {
+    public NewsResponseDto crawlNewsArticle(String url) {
         try {
             Document doc = Jsoup.connect(url).get();
 
@@ -99,7 +94,13 @@ public class daumCrawlingService {
 
             String title = titleElement.text();
             String date = dateElement.text();
-            String content = contentElements.text();
+            String content = "";
+
+            // P 태그 사이에 {^% 추가
+            for (Element element : contentElements) {
+                content += (element.text() + "{^%");
+            }
+
             String imageUrl = (imageElement != null) ? imageElement.attr("src") : null;
             String videoUrl = (videoElement != null) ? "https:" + videoElement.attr("src") : null;
 
@@ -109,8 +110,6 @@ public class daumCrawlingService {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy. M. d. H:mm");
             LocalDateTime localDateTime = LocalDateTime.parse(date, formatter);
 
-            // NewsResponseDto 객체를 생성하여 뉴스 정보를 담아 반환
-//            NewsResponseDto newsResponseDto = new NewsResponseDto(news);
             return new NewsResponseDto(title, allTag, localDateTime, content, imageUrl, videoUrl);
         } catch (IOException e) {
             e.printStackTrace();
@@ -118,19 +117,30 @@ public class daumCrawlingService {
         }
     }
 
-    // 제목을 형태소 분석하여 태그로 사용
+
+
+    private Set<String> allowedMorphs = new HashSet<>(Arrays.asList("ㄹ", "ㅂ", "ㄴ"));
+    private Komoran komoran = new Komoran(DEFAULT_MODEL.FULL);
+//    입력된 제목을 형태소 분석하여 의미 있는 태그를 추출
+//    형태소 분석에 사용되는 라이브러리는 Komoran
     public String analyzeTags(String title) {
-        Komoran komoran = new Komoran(DEFAULT_MODEL.FULL);
-        List<String> allTag=new ArrayList<>();
+        long startTime = System.currentTimeMillis();
+
+        String allTag = "";
         KomoranResult analyzeResultList = komoran.analyze(title);
-        List<Token> tokenList =analyzeResultList.getTokenList();
-        for (Token token : tokenList) {
-            if (token.getMorph().length() > 1 && !token.getMorph().startsWith("ㄹ") && !token.getMorph().startsWith("ㅂ") && !token.getMorph().startsWith("ㄴ")) {
+        for (Token token : analyzeResultList.getTokenList()) {
+            if (token.getMorph().length() > 1 && !allowedMorphs.contains(token)) {
 //                log.info(token.getMorph());
-                allTag.add(token.getMorph()+"{^%");
+                allTag += (token.getMorph()+"{^%");
             }
         }
-        return allTag.toString();
+        long endTime = System.currentTimeMillis();
+        long elapsedTime = endTime - startTime;
+        System.out.println("Elapsed Time: " + elapsedTime + "ms");
+
+
+        return allTag;
+
     }
 
 }
