@@ -27,6 +27,8 @@ public class NewsResponseDto {
         this.likes = news.getLikes();
         this.tags = news.getTags();
         this.date = news.getDate();
+        this.imageUrl = news.getImageUrl();
+        this.videoUrl = news.getVideoUrl();
     }
 
     public NewsResponseDto(String title, String tags, LocalDateTime localDateTime, String content, String imageUrl, String videoUrl) {
