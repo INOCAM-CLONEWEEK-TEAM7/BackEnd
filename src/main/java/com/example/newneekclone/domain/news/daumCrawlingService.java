@@ -23,7 +23,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j(topic = "daum")
 @EnableScheduling
@@ -32,17 +31,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class daumCrawlingService {
     private final NewsRepository newsRepository;
-//    private final ImagesRepository imagesRepository;
 
     // 주기적으로 실행되는 스케줄링 메서드
     @Scheduled(cron = "5 * * * * ?")
     public void allCrwaling() { //
         String[] categories = {"society", "politics", "economic", "foreign", "culture", "entertain", "sports", "digital"};
         String baseURL = "https://news.daum.net/breakingnews/";
-        Komoran komoran = new Komoran(DEFAULT_MODEL.FULL);
 
-//        List<NewsResponseDto> allNews = new ArrayList<>();
-//        List<String> allTag=new ArrayList<>();
         try {
             for (String category : categories) {
                 // 각 카테고리별로 페이지 1의 URL을 구성
@@ -63,18 +58,6 @@ public class daumCrawlingService {
                         continue;
                     }
 
-//                    // 같은 제목의 뉴스가 이미 데이터베이스에 있는 경우 건너뜀
-//                    News existingNewsTitle = newsRepository.findByTitle(title);
-//                    if (existingNewsTitle != null) {
-//                        continue;
-//                    }
-//
-//                    // 같은 링크의 뉴스가 이미 데이터베이스에 있는 경우 건너뜀
-//                    News existingNewsId = newsRepository.findByUrl(link);newsRepository.existsByContent()
-//                    if (existingNewsId != null) {
-//                        continue;
-//                    }
-
                     // 뉴스 기사의 상세 내용을 crawlNewsArticle() 메서드를 통해 가져옴
                     NewsResponseDto newsResponseDto = crawlNewsArticle(link, new News());
 
@@ -82,10 +65,6 @@ public class daumCrawlingService {
                     if (newsRepository.existsByContent(newsResponseDto.getContent())) {
                         continue;
                     }
-//                    News existingNewsContent = newsRepository.findByContent(newsResponseDto.getContent());
-//                    if (existingNewsContent != null) {
-//                        continue;
-//                    }
                     if (newsResponseDto != null) {
                         // 뉴스 엔티티를 생성하여 데이터베이스에 저장
 
