@@ -2,6 +2,7 @@ package com.example.newneekclone.domain.news.service;
 
 import com.example.newneekclone.domain.news.dto.NewsOneResponsDto;
 import com.example.newneekclone.domain.news.dto.NewsResponseDto;
+import com.example.newneekclone.domain.news.dto.NewsSearchResponseDto;
 import com.example.newneekclone.domain.news.entity.News;
 import com.example.newneekclone.domain.news.entity.NewsLike;
 import com.example.newneekclone.domain.news.exception.NewsNotFoundException;
@@ -96,7 +97,7 @@ public class NewsService {
 
     // 검색
     @Transactional(readOnly = true)
-    public List<NewsResponseDto> getSearch(String q) {
+    public NewsSearchResponseDto getSearch(String q) {
         List<News> news = newsRepository.findAllByOrderByDateDesc();
         List<News> searchNews = new ArrayList<News>();
         for(int i = 0; i < news.size(); i++){
@@ -106,9 +107,13 @@ public class NewsService {
         }
         if(searchNews.size()==0)
             throw new NewsNotFoundException(NOT_FOUND_DATA);
-        List<NewsResponseDto> response = searchNews.stream()
+
+        int newsCount = searchNews.size();
+        List<NewsResponseDto> newsList = searchNews.stream()
                 .map(NewsResponseDto::new)
                 .collect(Collectors.toList());
+
+        NewsSearchResponseDto response = new NewsSearchResponseDto(newsCount, newsList);
         return response;
     }
 }
