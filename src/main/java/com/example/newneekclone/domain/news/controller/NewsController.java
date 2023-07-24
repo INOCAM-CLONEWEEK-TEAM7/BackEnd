@@ -23,6 +23,7 @@ public class NewsController {
     private final NewsService newsService;
 //    private final daumCrawlingService daumCrawlingService;
     private final daumCrawlingService daumCrawlingServicetow;
+
     // 전체 뉴스 조회
     @GetMapping("/news")
     public ApiResponse<?> getNews(){
@@ -47,7 +48,6 @@ public class NewsController {
     @PostMapping("/news/{newsId}/like")
     public ApiResponse<?> likeNews(@PathVariable("newsId") Long newsId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         SuccessCode successCode = newsService.likeNews(newsId,userDetails.getUser().getId());
-//        SuccessCode successCode = newsService.likeNews(newsId,1L);
         return ResponseUtils.ok(successCode);
     }
 
@@ -59,6 +59,7 @@ public class NewsController {
         return ResponseUtils.ok(data);
     }
 
+    // 검색
     @GetMapping("/news/search")
     public ApiResponse<?> getSearch(@RequestParam String q){
         log.info("q={}", q);
