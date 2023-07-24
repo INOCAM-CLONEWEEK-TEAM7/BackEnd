@@ -25,7 +25,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public SuccessCode signIn(UserRequestDto userRequestDto) {
+    public SuccessCode signUp(UserRequestDto userRequestDto) {
         log.info("회원가입");
         String email = userRequestDto.getEmail();
         String nickname = userRequestDto.getNickname();
@@ -42,6 +42,7 @@ public class UserService {
                 .nickname(nickname)
                 .build();
         userRepository.save(user);
+
         return USER_SIGNUP_SUCCESS;
     }
 

@@ -18,8 +18,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 
-import static com.example.newneekclone.global.enums.SuccessCode.USER_SIGNUP_SUCCESS;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -29,9 +27,8 @@ public class UserController {
     private final MailService mailService;
 
     @PostMapping("/auth/signup")
-    public ApiResponse<?> signIn(@Valid @RequestBody UserRequestDto userRequestDto) {
-        userService.signIn(userRequestDto);
-        return ResponseUtils.ok(USER_SIGNUP_SUCCESS);
+    public ApiResponse<?> signUp(@Valid @RequestBody UserRequestDto userRequestDto) {
+        return ResponseUtils.ok(userService.signUp(userRequestDto));
 
     }
 
