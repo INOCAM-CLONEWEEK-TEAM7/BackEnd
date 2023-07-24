@@ -1,5 +1,6 @@
 package com.example.newneekclone.domain.news.controller;
 
+import com.example.newneekclone.domain.news.daumCrawlingService;
 import com.example.newneekclone.domain.news.dto.NewsOneResponsDto;
 import com.example.newneekclone.domain.news.dto.NewsResponseDto;
 import com.example.newneekclone.domain.news.service.NewsService;
@@ -20,6 +21,8 @@ import java.util.List;
 @RequestMapping("/api")
 public class NewsController {
     private final NewsService newsService;
+//    private final daumCrawlingService daumCrawlingService;
+    private final daumCrawlingService daumCrawlingServicetow;
     // 전체 뉴스 조회
     @GetMapping("/news")
     public ApiResponse<?> getNews(){
@@ -56,7 +59,6 @@ public class NewsController {
         return ResponseUtils.ok(data);
     }
 
-    // 검색
     @GetMapping("/news/search")
     public ApiResponse<?> getSearch(@RequestParam String q){
         log.info("q={}", q);

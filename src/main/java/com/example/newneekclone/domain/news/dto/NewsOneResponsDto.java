@@ -18,7 +18,7 @@ public class NewsOneResponsDto {
     public NewsOneResponsDto(News news){
         this.newsId = news.getId();
         this.title = news.getTitle();
-        this.createDate = news.getCreatedDate();
+        this.createDate = news.getDate();
         this.category = news.getCategory();
         this.tag = news.getTags();
         this.likeCount = news.getLikeCount();
