@@ -1,6 +1,5 @@
 package com.example.newneekclone.domain.news.entity;
 
-import com.example.newneekclone.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,25 +20,27 @@ public class News{
     private Long id;
 
     @Column(name = "category")
-    String category;
+    private String category;
 
     @Column(name = "title")
-    String title;
+    private String title;
 
     @Column(name = "content")
-    String content;
+    private String content;
 
     @Column(name = "tags")
-    String tags;
+    private String tags;
 
     @Column(name = "createdDate")
-    LocalDateTime createdDate;
+    private LocalDateTime createdDate;
 
     @Transient
     private int likeCount;
+
     public int getLikeCount(){
         return this.likeCount;
     }
+
     public void setLikeCount(int likeCount){
         this.likeCount = likeCount;
     }

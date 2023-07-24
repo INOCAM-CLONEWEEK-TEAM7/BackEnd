@@ -7,21 +7,12 @@ import com.example.newneekclone.global.enums.SuccessCode;
 import com.example.newneekclone.global.responsedto.ApiResponse;
 import com.example.newneekclone.global.security.UserDetailsImpl;
 import com.example.newneekclone.global.utils.ResponseUtils;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.charset.Charset;
 import java.util.List;
-
-import static com.example.newneekclone.global.enums.SuccessCode.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -39,8 +30,12 @@ public class NewsController {
     // 상세 뉴스 조회
     @GetMapping("/news/{newsId}")
     public ApiResponse<?> getNewsOne(@PathVariable("newsId") Long newsId, @AuthenticationPrincipal UserDetailsImpl userDetails){
-//        Long userId = userDetails.getUser().getId();
-        Long userId = 1L;
+        Long userId = -1L;
+        if(userDetails != null){
+            userId = userDetails.getUser().getId();
+        }
+        log.info("userId={}", userId);
+
         NewsOneResponsDto data = newsService.getNewsOne(newsId, userId);
         return ResponseUtils.ok(data);
     }
@@ -48,8 +43,8 @@ public class NewsController {
     // 좋아요 누르기
     @PostMapping("/news/{newsId}/like")
     public ApiResponse<?> likeNews(@PathVariable("newsId") Long newsId, @AuthenticationPrincipal UserDetailsImpl userDetails){
-//        SuccessCode successCode = newsService.likeNews(newsId,userDetails.getUser().getId());
-        SuccessCode successCode = newsService.likeNews(newsId,1L);
+        SuccessCode successCode = newsService.likeNews(newsId,userDetails.getUser().getId());
+//        SuccessCode successCode = newsService.likeNews(newsId,1L);
         return ResponseUtils.ok(successCode);
     }
 
