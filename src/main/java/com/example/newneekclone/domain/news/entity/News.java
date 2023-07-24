@@ -5,6 +5,8 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "news")
 @Getter
@@ -16,10 +18,10 @@ public class News {
     private Long id;
 
     @Column(name = "category")
-    String category;
+    private String category;
 
     @Column(name = "title")
-    String title;
+    private String title;
 
     @Column(name = "content", columnDefinition = "TEXT")
     String content;
@@ -42,6 +44,9 @@ public class News {
     @Column(name = "videoURL")
     String videoUrl;
 
+    @Transient
+    private int likeCount;
+
     public News(String allTag, String title, String category, String link, String content, LocalDateTime date, String imageUrl, String videoUrl) {
         this.tags = allTag;
         this.title = title;
@@ -52,4 +57,16 @@ public class News {
         this.imageUrl = imageUrl;
         this.videoUrl = videoUrl;
     }
+
+    public int getLikeCount(){
+        return this.likeCount;
+    }
+
+    public void setLikeCount(int likeCount){
+        this.likeCount = likeCount;
+    }
+
+    @Transient
+    private boolean likeCheck;
+    public boolean getLikeCheck(){ return this.likeCheck; }
 }

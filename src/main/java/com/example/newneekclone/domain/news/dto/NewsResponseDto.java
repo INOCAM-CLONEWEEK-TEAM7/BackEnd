@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class NewsResponseDto {
-    private Long id;
+    private Long newsId;
     private String title;
     private String category;
     private String content;
@@ -19,8 +19,8 @@ public class NewsResponseDto {
     private String imageUrl;
     private String videoUrl;
 
-    public NewsResponseDto(News news) {
-        this.id = news.getId();
+    public NewsResponseDto(News news){
+        this.newsId = news.getId();
         this.title = news.getTitle();
         this.category = news.getCategory();
         this.content = news.getContent();
