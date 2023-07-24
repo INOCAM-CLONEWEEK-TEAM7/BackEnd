@@ -1,5 +1,6 @@
 package com.example.newneekclone.global.exception;
 
+import com.example.newneekclone.domain.user.exception.UserDuplicationException;
 import com.example.newneekclone.global.responsedto.ApiResponse;
 import com.example.newneekclone.global.utils.ResponseUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,13 @@ import java.util.Map;
 @Slf4j(topic = "global exception handler")
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    
+
+    @ExceptionHandler(UserDuplicationException.class)
+    public ApiResponse<?> handleUserDuplicationException(UserDuplicationException e) {
+        log.info(e.getMessage());
+        return ResponseUtils.error(e.getErrorCode());
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ApiResponse<?> validationExceptionHandler(MethodArgumentNotValidException e) {
         Map<String, String> errors = new LinkedHashMap<>();
