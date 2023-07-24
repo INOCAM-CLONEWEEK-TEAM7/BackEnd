@@ -28,7 +28,7 @@ public class UserController {
     private final UserService userService;
     private final MailService mailService;
 
-    @PostMapping("/auth/signin")
+    @PostMapping("/auth/signup")
     public ApiResponse<?> signIn(@Valid @RequestBody UserRequestDto userRequestDto) {
         userService.signIn(userRequestDto);
         return ResponseUtils.ok(USER_SIGNUP_SUCCESS);
