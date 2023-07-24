@@ -19,6 +19,12 @@ public class ResponseUtils {
         return new ApiResponse<>(true, statusCode, msg, null, null);
     }
 
+    public static <T> ApiResponse<?> ok(SuccessCode successCode, T response) {
+        int statusCode = successCode.getHttpStatus().value();
+        String msg = successCode.getDetail();
+        return new ApiResponse<>(true, statusCode, msg, response, null);
+    }
+
     public static ApiResponse<?> error(ErrorCode errorCode) {
         int statusCode = errorCode.getHttpStatus().value();
         String msg = errorCode.getDetail();
