@@ -1,5 +1,6 @@
 package com.example.newneekclone.domain.news;
 
+import com.example.newneekclone.domain.news.dto.NewsOneResponsDto;
 import com.example.newneekclone.domain.news.dto.NewsResponseDto;
 import com.example.newneekclone.domain.news.entity.News;
 import com.example.newneekclone.domain.news.repository.NewsRepository;
@@ -58,7 +59,7 @@ public class daumCrawlingService {
                         }
 
                         // 뉴스 기사의 상세 내용을 crawlNewsArticle() 메서드를 통해 가져옴
-                        NewsResponseDto newsResponseDto = crawlNewsArticle(link);
+                        NewsOneResponsDto newsResponseDto = crawlNewsArticle(link);
 
                         // 같은 내용의 뉴스가 이미 데이터베이스에 있는 경우 건너뜀
                         if (newsRepository.existsByContent(newsResponseDto.getContent())) {
@@ -66,8 +67,8 @@ public class daumCrawlingService {
                         }
                         if (newsResponseDto != null) {
                             // Create the News entity and add it to the list
-                            LocalDateTime localDateTime = newsResponseDto.getDate();
-                            News news = new News(newsResponseDto.getTags(), newsResponseDto.getTitle(), category,
+                            LocalDateTime localDateTime = newsResponseDto.getCreateDate();
+                            News news = new News(newsResponseDto.getTag(), newsResponseDto.getTitle(), category,
                                     link, newsResponseDto.getContent(), localDateTime, newsResponseDto.getImageUrl(), newsResponseDto.getVideoUrl());
 
                             newsRepository.save(news);
@@ -81,7 +82,7 @@ public class daumCrawlingService {
     }
 
     // 뉴스 기사 상세 내용을 크롤링하는 메서드
-    public NewsResponseDto crawlNewsArticle(String url) {
+    public NewsOneResponsDto crawlNewsArticle(String url) {
         try {
             Document doc = Jsoup.connect(url).get();
 
@@ -110,7 +111,7 @@ public class daumCrawlingService {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy. M. d. H:mm");
             LocalDateTime localDateTime = LocalDateTime.parse(date, formatter);
 
-            return new NewsResponseDto(title, allTag, localDateTime, content, imageUrl, videoUrl);
+            return new NewsOneResponsDto(title, allTag, localDateTime, content, imageUrl, videoUrl);
         } catch (IOException e) {
             e.printStackTrace();
             return null;
