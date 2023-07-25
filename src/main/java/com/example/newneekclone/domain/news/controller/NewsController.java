@@ -3,7 +3,7 @@ package com.example.newneekclone.domain.news.controller;
 import com.example.newneekclone.domain.news.daumCrawlingService;
 import com.example.newneekclone.domain.news.dto.NewsOneResponsDto;
 import com.example.newneekclone.domain.news.dto.NewsResponseDto;
-import com.example.newneekclone.domain.news.dto.NewsSearchResponseDto;
+import com.example.newneekclone.domain.news.dto.NewsCountResponseDto;
 import com.example.newneekclone.domain.news.service.NewsService;
 import com.example.newneekclone.global.enums.SuccessCode;
 import com.example.newneekclone.global.responsedto.ApiResponse;
@@ -11,7 +11,6 @@ import com.example.newneekclone.global.security.UserDetailsImpl;
 import com.example.newneekclone.global.utils.ResponseUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -31,7 +30,7 @@ public class NewsController {
     // 전체 뉴스 조회
     @GetMapping("/news")
     public ApiResponse<?> getNews(@PageableDefault(size = 12) Pageable pageable){
-        List<NewsResponseDto> data = newsService.getNews(pageable);
+        NewsCountResponseDto data = newsService.getNews(pageable);
         return ResponseUtils.ok(data);
     }
 
@@ -59,15 +58,15 @@ public class NewsController {
     @GetMapping("/news/category")
     public ApiResponse<?> getCategory(@PageableDefault(size = 12) Pageable pageable, @RequestParam String tag){
         log.info("category={}", tag);
-        List<NewsResponseDto> data = newsService.getCategory(tag, pageable);
+        NewsCountResponseDto data = newsService.getCategory(tag, pageable);
         return ResponseUtils.ok(data);
     }
 
     // 검색
     @GetMapping("/news/search")
-    public ApiResponse<?> getSearch(@PageableDefault(size = 12) Pageable pageable, @RequestParam String q){
+    public ApiResponse<?> getSearch(@RequestParam String q, @RequestParam int page){
         log.info("q={}", q);
-        NewsSearchResponseDto data = newsService.getSearch(q, pageable);
+        NewsCountResponseDto data = newsService.getSearch(q, page);
         return ResponseUtils.ok(data);
     }
 }
