@@ -11,6 +11,9 @@ import com.example.newneekclone.global.security.UserDetailsImpl;
 import com.example.newneekclone.global.utils.ResponseUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,8 +30,8 @@ public class NewsController {
 
     // 전체 뉴스 조회
     @GetMapping("/news")
-    public ApiResponse<?> getNews(){
-        List<NewsResponseDto> data = newsService.getNews();
+    public ApiResponse<?> getNews(@PageableDefault(size = 12) Pageable pageable){
+        List<NewsResponseDto> data = newsService.getNews(pageable);
         return ResponseUtils.ok(data);
     }
 
@@ -54,17 +57,17 @@ public class NewsController {
 
     // 카테고리별 조회
     @GetMapping("/news/category")
-    public ApiResponse<?> getCategory(@RequestParam String tag){
+    public ApiResponse<?> getCategory(@PageableDefault(size = 12) Pageable pageable, @RequestParam String tag){
         log.info("category={}", tag);
-        List<NewsResponseDto> data = newsService.getCategory(tag);
+        List<NewsResponseDto> data = newsService.getCategory(tag, pageable);
         return ResponseUtils.ok(data);
     }
 
     // 검색
     @GetMapping("/news/search")
-    public ApiResponse<?> getSearch(@RequestParam String q){
+    public ApiResponse<?> getSearch(@PageableDefault(size = 12) Pageable pageable, @RequestParam String q){
         log.info("q={}", q);
-        NewsSearchResponseDto data = newsService.getSearch(q);
+        NewsSearchResponseDto data = newsService.getSearch(q, pageable);
         return ResponseUtils.ok(data);
     }
 }
