@@ -1,6 +1,7 @@
 package com.example.newneekclone.domain.user.service;
 
 import com.example.newneekclone.domain.user.dto.UserRequestDto;
+import com.example.newneekclone.domain.user.dto.UserResponseDto;
 import com.example.newneekclone.domain.user.entity.User;
 import com.example.newneekclone.domain.user.exception.UserDuplicationException;
 import com.example.newneekclone.domain.user.exception.UserNotFoundException;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 import static com.example.newneekclone.global.enums.ErrorCode.DUPLICATE_RESOURCE;
 import static com.example.newneekclone.global.enums.ErrorCode.USER_NOT_FOUND;
-import static com.example.newneekclone.global.enums.SuccessCode.USER_PASSWORD_CHANGE_SUCCESS;
+import static com.example.newneekclone.global.enums.SuccessCode.USER_DATA_UPDATE_SUCCESS;
 import static com.example.newneekclone.global.enums.SuccessCode.USER_SIGNUP_SUCCESS;
 
 
@@ -55,7 +56,7 @@ public class UserService {
 
         user.update(user.getNickname(), newPassword);
 
-        return USER_PASSWORD_CHANGE_SUCCESS;
+        return USER_DATA_UPDATE_SUCCESS;
     }
 
     public Boolean checkEmail(String email) {
@@ -64,5 +65,11 @@ public class UserService {
 
     public Boolean checkNickname(String nickname) {
         return userRepository.existsByNickname(nickname);
+    }
+
+    public UserResponseDto findById(Long userId) {
+        return new UserResponseDto(userRepository.findById(userId).orElseThrow(
+                () -> new UserNotFoundException(USER_NOT_FOUND)
+        ));
     }
 }
