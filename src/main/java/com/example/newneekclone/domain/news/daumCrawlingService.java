@@ -33,7 +33,7 @@ public class daumCrawlingService {
     private final NewsRepository newsRepository;
 
     // 주기적으로 실행하는 스케줄링 메서드
-    @Scheduled(cron = "0 * * * * ?") // 매분 마다
+    @Scheduled(cron = "0 5 * * * ?") // 매분 마다
     public void allCrwaling() { //
         String[] categories = {"society", "politics", "economic", "foreign", "culture", "entertain", "sports", "digital"};
         String baseURL = "https://news.daum.net/breakingnews/";
