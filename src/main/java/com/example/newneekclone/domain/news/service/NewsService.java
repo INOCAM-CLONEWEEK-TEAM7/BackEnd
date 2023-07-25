@@ -13,8 +13,12 @@ import com.example.newneekclone.domain.user.exception.UserNotFoundException;
 import com.example.newneekclone.domain.user.repository.UserRepository;
 import com.example.newneekclone.global.enums.SuccessCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StopWatch;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +30,7 @@ import static com.example.newneekclone.global.enums.ErrorCode.NOT_FOUND_DATA;
 import static com.example.newneekclone.global.enums.SuccessCode.LIKE_CANCEL;
 import static com.example.newneekclone.global.enums.SuccessCode.LIKE_SUCCESS;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class NewsService {
@@ -36,9 +41,8 @@ public class NewsService {
 
     // 전체 뉴스 조회
     @Transactional(readOnly = true)
-    public List<NewsResponseDto> getNews() {
-        List<News> news = newsRepository.findAllByOrderByDateDesc();
-
+    public List<NewsResponseDto> getNews(Pageable pageable) {
+        List<News> news = newsRepository.findAllByOrderByDateDesc(pageable);
         List<NewsResponseDto> response = news.stream()
                 .map(NewsResponseDto::new)
                 .collect(Collectors.toList());
@@ -86,19 +90,23 @@ public class NewsService {
 
     // 카테고리별 조회
     @Transactional(readOnly = true)
-    public List<NewsResponseDto> getCategory(String category) {
-        List<News> news = newsRepository.findByCategory(category);
+    public List<NewsResponseDto> getCategory(String category, Pageable pageable) {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        List<News> news = newsRepository.findByCategory(category, pageable);
 
         List<NewsResponseDto> response = news.stream()
                 .map(NewsResponseDto::new)
                 .collect(Collectors.toList());
+        stopWatch.stop();
+        log.info("객체 생성 시간: {}", stopWatch.getTotalTimeSeconds());
         return response;
     }
 
     // 검색
     @Transactional(readOnly = true)
-    public NewsSearchResponseDto getSearch(String q) {
-        List<News> news = newsRepository.findAllByOrderByDateDesc();
+    public NewsSearchResponseDto getSearch(String q, Pageable pageable) {
+        List<News> news = newsRepository.findAllByOrderByDateDesc(pageable);
         List<News> searchNews = new ArrayList<News>();
         for(int i = 0; i < news.size(); i++){
             if(news.get(i).getContent().contains(q)){
