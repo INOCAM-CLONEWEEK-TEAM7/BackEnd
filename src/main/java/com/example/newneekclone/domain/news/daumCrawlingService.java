@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StopWatch;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -35,6 +36,8 @@ public class daumCrawlingService {
     // 주기적으로 실행하는 스케줄링 메서드
     @Scheduled(cron = "0 5 * * * ?") // 매분 마다
     public void allCrwaling() { //
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
         String[] categories = {"society", "politics", "economic", "foreign", "culture", "entertain", "sports", "digital"};
         String baseURL = "https://news.daum.net/breakingnews/";
 
@@ -79,6 +82,8 @@ public class daumCrawlingService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        stopWatch.stop();
+        log.info("객체 생성 시간: {}", stopWatch.getTotalTimeSeconds());
     }
 
     // 뉴스 기사 상세 내용을 크롤링하는 메서드
