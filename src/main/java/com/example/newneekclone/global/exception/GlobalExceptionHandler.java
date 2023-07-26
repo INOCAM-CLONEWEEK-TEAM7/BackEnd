@@ -1,6 +1,8 @@
 package com.example.newneekclone.global.exception;
 
+import com.example.newneekclone.domain.news.exception.NewsNotFoundException;
 import com.example.newneekclone.domain.user.exception.UserDuplicationException;
+import com.example.newneekclone.domain.user.exception.UserNotFoundException;
 import com.example.newneekclone.global.responsedto.ApiResponse;
 import com.example.newneekclone.global.utils.ResponseUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +26,24 @@ import java.util.Map;
 @Slf4j(topic = "global exception handler")
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(RuntimeException.class)
+    public ApiResponse<?> handleRuntimeException(RuntimeException e) {
+        log.info(e.getMessage());
+        return ResponseUtils.error(e.getMessage());
+    }
+
+    @ExceptionHandler(NewsNotFoundException.class)
+    public ApiResponse<?> handleNewsNotFoundException(NewsNotFoundException e) {
+        log.info(e.getMessage());
+        return ResponseUtils.error(e.getErrorCode());
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ApiResponse<?> handleUserNotFoundException(UserNotFoundException e) {
+        log.info(e.getMessage());
+        return ResponseUtils.error(e.getErrorCode());
+    }
 
     @ExceptionHandler(UserDuplicationException.class)
     public ApiResponse<?> handleUserDuplicationException(UserDuplicationException e) {

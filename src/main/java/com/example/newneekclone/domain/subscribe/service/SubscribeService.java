@@ -8,18 +8,19 @@ import com.example.newneekclone.global.enums.SuccessCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import static com.example.newneekclone.global.enums.ErrorCode.*;
-import static com.example.newneekclone.global.enums.SuccessCode.*;
+import static com.example.newneekclone.global.enums.ErrorCode.DUPLICATE_EMAIL;
+import static com.example.newneekclone.global.enums.SuccessCode.SUBSCRIBE_SUCCESS;
 
 @RequiredArgsConstructor
 @Service
 public class SubscribeService {
     private final SubscribeRepository subscribeRepository;
+
     public SuccessCode subscribe(SubscribeRequestDto subscribeRequestDto) {
         String email = subscribeRequestDto.getEmail();
         String nickname = subscribeRequestDto.getNickname();
         if (checkEmail(email)) {
-            throw new UserDuplicationException(DUPLICATE_RESOURCE);
+            throw new UserDuplicationException(DUPLICATE_EMAIL);
         }
 
         // 구독자 등록

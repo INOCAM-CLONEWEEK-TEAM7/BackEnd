@@ -25,15 +25,23 @@ public class User {
     @Column(nullable = false)
     private String nickname;
 
+    @Column(nullable = false)
+    private Boolean marketingAgree;
+
+    @Column(nullable = false)
+    private Boolean social;
+
     public void update(String nickname, String password) {
         this.nickname = nickname;
         this.password = password;
     }
 
     @Builder
-    private User(String email, String password, String nickname) {
+    private User(String email, String password, String nickname, Boolean marketingAgree, Boolean social) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
+        this.marketingAgree = marketingAgree;
+        this.social = social;
     }
 }

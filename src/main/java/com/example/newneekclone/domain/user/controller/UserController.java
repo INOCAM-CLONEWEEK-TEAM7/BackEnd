@@ -4,11 +4,15 @@ import com.example.newneekclone.domain.mail.dto.ChangePasswordRequestDto;
 import com.example.newneekclone.domain.mail.dto.EmailRequestDto;
 import com.example.newneekclone.domain.mail.entity.EmailMessage;
 import com.example.newneekclone.domain.mail.service.MailService;
+import com.example.newneekclone.domain.user.dto.SocialLoginRequestDto;
+import com.example.newneekclone.domain.user.dto.SocialSignUpRequestDto;
 import com.example.newneekclone.domain.user.dto.UserRequestDto;
 import com.example.newneekclone.domain.user.service.UserService;
 import com.example.newneekclone.global.responsedto.ApiResponse;
+import com.example.newneekclone.global.security.jwt.JwtUtil;
 import com.example.newneekclone.global.utils.JasyptUtils;
 import com.example.newneekclone.global.utils.ResponseUtils;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +26,7 @@ import java.util.Date;
 import java.util.Map;
 
 import static com.example.newneekclone.global.enums.ErrorCode.USER_NOT_FOUND;
+import static com.example.newneekclone.global.enums.SuccessCode.USER_LOGIN_SUCCESS;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,11 +35,29 @@ import static com.example.newneekclone.global.enums.ErrorCode.USER_NOT_FOUND;
 public class UserController {
     private final UserService userService;
     private final MailService mailService;
+    private final JwtUtil jwtUtil;
 
     @PostMapping("/auth/signup")
     public ApiResponse<?> signUp(@Valid @RequestBody UserRequestDto userRequestDto) {
         return ResponseUtils.ok(userService.signUp(userRequestDto));
 
+    }
+
+    @PostMapping("/auth/social/signup")
+    public ApiResponse<?> socialSignUp(@Valid @RequestBody SocialSignUpRequestDto socialSignUpRequestDto) {
+        return ResponseUtils.ok(userService.signUp(socialSignUpRequestDto));
+    }
+
+    @PostMapping("/auth/social/login")
+    public ApiResponse<?> socialLogin(@Valid @RequestBody SocialLoginRequestDto socialLoginRequestDto, HttpServletResponse response) {
+        if (userService.checkEmail(socialLoginRequestDto.getEmail())) {
+            String userNickname = userService.getNickname(socialLoginRequestDto.getEmail());
+            String token = jwtUtil.createToken(userNickname);
+            jwtUtil.addTokenToHeader(token, response);
+            return ResponseUtils.ok(USER_LOGIN_SUCCESS);
+        } else {
+            return ResponseUtils.error(USER_NOT_FOUND);
+        }
     }
 
     @PostMapping("/auth/forgot")
