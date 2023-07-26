@@ -24,8 +24,6 @@ import java.util.List;
 @RequestMapping("/api")
 public class NewsController {
     private final NewsService newsService;
-//    private final daumCrawlingService daumCrawlingService;
-    private final daumCrawlingService daumCrawlingServicetow;
 
     // 전체 뉴스 조회
     @GetMapping("/news")

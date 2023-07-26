@@ -5,6 +5,7 @@ import com.example.newneekclone.domain.news.entity.News;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -23,5 +24,8 @@ public interface NewsRepository extends JpaRepository<News, Long> {
 
     List<News> findByContentContainingOrderByDateDesc(String q);
 
-    List<News> findByDateBefore(LocalDateTime thresholdDateTime);
+    @Query(value = "SELECT * FROM news ORDER BY date ASC LIMIT :limit", nativeQuery = true)
+    List<News> findOldestNByDateAsc(int limit);
+    @Query("SELECT COUNT(*) FROM News n")
+    long countAllNews();
 }
