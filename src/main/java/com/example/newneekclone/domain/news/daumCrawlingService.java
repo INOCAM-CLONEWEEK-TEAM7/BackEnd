@@ -34,7 +34,7 @@ public class daumCrawlingService {
     private final NewsRepository newsRepository;
 
     // 주기적으로 실행하는 스케줄링 메서드
-    @Scheduled(cron = "0 5 * * * ?") // 매분 마다
+    @Scheduled(cron = "0 */30 * * * ?") // 매30분 마다
     public void allCrwaling() { //
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
@@ -42,7 +42,7 @@ public class daumCrawlingService {
         String baseURL = "https://news.daum.net/breakingnews/";
 
         try {
-            for (int page = 1; page <= 1; page++) { // 1~10 페이지
+            for (int page = 1; page <= 3; page++) { // 1~3 페이지
                 for (String category : categories) { // 각 카테고리별로
                     // 현재 카테고리와 페이지를 사용하여 URL 구성
                     String url = baseURL + category + "?page=" + page;
@@ -149,4 +149,22 @@ public class daumCrawlingService {
 
     }
 
+    // 제한된 양 이상의 뉴스 데이터 삭제 메서드
+    @Scheduled(cron = "0 */30 * * * ?") // 매분 마다
+    private void deleteOldNews() {
+        // 현재 날짜와 시간을 가져옴
+        LocalDateTime currentDateTime = LocalDateTime.now();
+
+        // 데이터를 보관할 기간 설정 (예시: 30일)
+        int retentionDays = 3;
+
+        // retentionDays 이상 오래된 뉴스 데이터를 조회
+        LocalDateTime thresholdDateTime = currentDateTime.minusDays(retentionDays);
+        List<News> oldNewsList = newsRepository.findByDateBefore(thresholdDateTime);
+
+        // 조회된 오래된 뉴스 데이터 삭제
+        if (!oldNewsList.isEmpty()) {
+            newsRepository.deleteAll(oldNewsList);
+        }
+    }
 }
