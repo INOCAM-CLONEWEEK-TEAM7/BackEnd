@@ -42,7 +42,7 @@ public class daumCrawlingService {
         String baseURL = "https://news.daum.net/breakingnews/";
 
         try {
-            for (int page = 1; page <= 1; page++) { // 1~10 페이지
+            for (int page = 1; page <= 3; page++) { // 1~3 페이지
                 for (String category : categories) { // 각 카테고리별로
                     // 현재 카테고리와 페이지를 사용하여 URL 구성
                     String url = baseURL + category + "?page=" + page;
