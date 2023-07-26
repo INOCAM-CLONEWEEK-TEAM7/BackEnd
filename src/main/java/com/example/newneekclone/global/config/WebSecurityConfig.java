@@ -68,6 +68,7 @@ public class WebSecurityConfig {
                                 .requestMatchers(new AntPathRequestMatcher("/api/auth/**")).permitAll()
 //                        .requestMatchers(new AntPathRequestMatcher("/api/news", HttpMethod.GET.name())).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/api/news/**")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/login/oauth2/**")).permitAll()
                                 .anyRequest().authenticated() // 그 외 요청은 인증 필요
         );
 
