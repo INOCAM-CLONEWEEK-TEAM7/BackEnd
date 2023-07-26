@@ -26,7 +26,8 @@ public enum ErrorCode {
     REFRESH_TOKEN_NOT_FOUND(NOT_FOUND, "로그아웃 된 사용자입니다"),
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
-    DUPLICATE_RESOURCE(CONFLICT, "데이터가 이미 존재합니다"),
+    DUPLICATE_NICKNAME(CONFLICT, "해당 닉네임이 이미 존재합니다."),
+    DUPLICATE_EMAIL(CONFLICT, "해당 이메일은 가입되어 있습니다."),
 
     ;
 

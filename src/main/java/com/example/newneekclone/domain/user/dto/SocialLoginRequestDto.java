@@ -5,17 +5,11 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 
 @Getter
-public class UserRequestDto {
+public class SocialLoginRequestDto {
     @Email(message = "이메일 양식이 아닙니다")
     @NotBlank(message = "Email 공백 불가")
     private String email;
 
-    @NotBlank(message = "password 공백 불가")
-    private String password;
-
-    @NotBlank(message = "닉네임 공백 불가")
-    private String nickname;
-
-    @NotBlank(message = "마케팅 동의 미기입")
-    private Boolean optionCheck;
+    @NotBlank(message = "소셜로그인 유무 확인 필수")
+    private Boolean social;
 }
