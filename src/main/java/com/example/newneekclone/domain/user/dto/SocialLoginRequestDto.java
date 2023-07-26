@@ -10,6 +10,5 @@ public class SocialLoginRequestDto {
     @NotBlank(message = "Email 공백 불가")
     private String email;
 
-    @NotBlank(message = "소셜로그인 유무 확인 필수")
-    private Boolean social;
+    private Boolean social = false;
 }

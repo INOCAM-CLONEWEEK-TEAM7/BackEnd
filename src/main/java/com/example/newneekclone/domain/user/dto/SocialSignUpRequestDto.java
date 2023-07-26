@@ -13,6 +13,5 @@ public class SocialSignUpRequestDto {
     @NotBlank(message = "닉네임 공백 불가")
     private String nickname;
 
-    @NotBlank(message = "마케팅 동의 미기입")
-    private Boolean optionCheck;
+    private Boolean optionCheck = false;
 }
