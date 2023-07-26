@@ -34,7 +34,7 @@ public class daumCrawlingService {
     private final NewsRepository newsRepository;
 
     // 주기적으로 실행하는 스케줄링 메서드
-    @Scheduled(cron = "0 5 * * * ?") // 매분 마다
+    @Scheduled(cron = "0 */30 * * * ?") // 매30분 마다
     public void allCrwaling() { //
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
@@ -42,7 +42,7 @@ public class daumCrawlingService {
         String baseURL = "https://news.daum.net/breakingnews/";
 
         try {
-            for (int page = 1; page <= 1; page++) { // 1~10 페이지
+            for (int page = 1; page <= 3; page++) { // 1~3 페이지
                 for (String category : categories) { // 각 카테고리별로
                     // 현재 카테고리와 페이지를 사용하여 URL 구성
                     String url = baseURL + category + "?page=" + page;
@@ -149,12 +149,12 @@ public class daumCrawlingService {
 
     }
 
-    @Scheduled(cron = "0 5 * * * ?") // 매분 마다
+    @Scheduled(cron = "0 */30 * * * ?") // 매분 마다
     // 제한된 양 이상의 뉴스 데이터 삭제 메서드
     private void deleteOldNews() {
 
         // 보존할 최대 뉴스 데이터 개수 설정
-        int maxNewsCount = 1000;
+        int maxNewsCount = 5000;
 
         // 데이터 개수가 최대 뉴스 데이터 개수를 초과하는 경우, 오래된 뉴스 데이터를 조회하여 삭제
         // count 테이블을 따로 만드는게 좋을까?
