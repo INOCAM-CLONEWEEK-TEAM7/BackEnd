@@ -149,22 +149,21 @@ public class daumCrawlingService {
 
     }
 
-    @Scheduled(cron = "0 */30 * * * ?") // 매분 마다
     // 제한된 양 이상의 뉴스 데이터 삭제 메서드
+    @Scheduled(cron = "0 */30 * * * ?") // 매분 마다
     private void deleteOldNews() {
+        // 현재 날짜와 시간을 가져옴
+        LocalDateTime currentDateTime = LocalDateTime.now();
 
-        // 보존할 최대 뉴스 데이터 개수 설정
-        int maxNewsCount = 5000;
+        // 데이터를 보관할 기간 설정 (예시: 30일)
+        int retentionDays = 3;
 
-        // 데이터 개수가 최대 뉴스 데이터 개수를 초과하는 경우, 오래된 뉴스 데이터를 조회하여 삭제
-        // count 테이블을 따로 만드는게 좋을까?
-        long newsCount = newsRepository.count();
-        if (newsCount > maxNewsCount) {
-            // 오래된 뉴스 데이터를 조회하여 삭제할 개수 계산
-            Long deleteCount = (newsCount - maxNewsCount);
+        // retentionDays 이상 오래된 뉴스 데이터를 조회
+        LocalDateTime thresholdDateTime = currentDateTime.minusDays(retentionDays);
+        List<News> oldNewsList = newsRepository.findByDateBefore(thresholdDateTime);
 
-            // 삭제할 오래된 뉴스 데이터 조회 및 삭제
-            List<News> oldNewsList = newsRepository.findTopNOrderByDate(deleteCount); // 가장 오래된 N개의 뉴스 데이터를 날짜를 기준으로 오름차순으로 조회
+        // 조회된 오래된 뉴스 데이터 삭제
+        if (!oldNewsList.isEmpty()) {
             newsRepository.deleteAll(oldNewsList);
         }
     }
