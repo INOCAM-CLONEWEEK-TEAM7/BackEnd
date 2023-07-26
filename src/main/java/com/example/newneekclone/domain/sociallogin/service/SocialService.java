@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -31,6 +32,18 @@ public class SocialService {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final RestTemplate restTemplate = new RestTemplate();
+
+    @Value("${security.oauth2.google.client-id}")
+    private String clientId;
+    @Value("${security.oauth2.google.client-secret}")
+    private String clientSecret;
+    @Value("${security.oauth2.google.redirect-uri}")
+    private String redirectUri;
+    @Value("${security.oauth2.google.token-uri}")
+    String tokenUri;
+    @Value("${security.oauth2.google.resource-uri}")
+    String resourceUri;
+
     public SocialResponseDto socialLogin(String code, String registrationId, HttpServletResponse response) throws IOException, ServletException {
         String accessToken = getAccessToken(code, registrationId);
         JsonNode userResourceNode = getUserResource(accessToken, registrationId);
@@ -57,10 +70,6 @@ public class SocialService {
     }
 
     private String getAccessToken(String authorizationCode, String registrationId) {
-        String clientId = "241187094315-9h1rc47r7k69fr03uldk4dggtq8l739v.apps.googleusercontent.com";
-        String clientSecret = "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";
-        final String redirectUri = "http://localhost:8080/login/oauth2/code/google";
-        final String tokenUri = "https://oauth2.googleapis.com/token";
          MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("code", authorizationCode);
         params.add("client_id", clientId);
@@ -78,8 +87,6 @@ public class SocialService {
     }
 
     private JsonNode getUserResource(String accessToken, String registrationId) {
-        final String resourceUri = "https://www.googleapis.com/oauth2/v2/userinfo";
-
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
         HttpEntity entity = new HttpEntity(headers);
