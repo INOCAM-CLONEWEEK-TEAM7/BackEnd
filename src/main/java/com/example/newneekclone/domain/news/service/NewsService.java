@@ -41,7 +41,6 @@ public class NewsService {
     private final UserRepository userRepository;
 
     // 전체 뉴스 조회
-    @Transactional(readOnly = true)
     public NewsCountResponseDto getNews(Pageable pageable) {
         int newsCount = (int) newsRepository.findAllByOrderByDateDesc().stream().count();
         log.info("newsCount={}", newsCount);
@@ -54,7 +53,6 @@ public class NewsService {
     }
 
     // 상세 뉴스 조회
-    @Transactional(readOnly = true)
     public NewsOneResponsDto getNewsOne(Long newsId, Long userId){
         News news = newsRepository.findById(newsId).orElseThrow(
                 () -> new NewsNotFoundException(NOT_FOUND_DATA)
@@ -93,7 +91,6 @@ public class NewsService {
     }
 
     // 카테고리별 조회
-    @Transactional(readOnly = true)
     public NewsCountResponseDto getCategory(String category, Pageable pageable) {
         int newsCount = (int) newsRepository.findByCategory(category).stream().count();
         List<News> news = newsRepository.findByCategory(category, pageable);
@@ -106,15 +103,8 @@ public class NewsService {
     }
 
     // 검색
-    @Transactional(readOnly = true)
     public NewsCountResponseDto getSearch(String q, int page) {
-        List<News> news = newsRepository.findAllByOrderByDateDesc();
-        List<News> searchNews = new ArrayList<News>();
-        for(int i = 0; i < news.size(); i++){
-            if(news.get(i).getContent().contains(q)){
-                searchNews.add(news.get(i));
-            }
-        }
+        List<News> searchNews = newsRepository.findByContentContainingOrderByDateDesc(q);
         if(searchNews.size()==0)
             throw new NewsNotFoundException(NOT_FOUND_DATA);
 
