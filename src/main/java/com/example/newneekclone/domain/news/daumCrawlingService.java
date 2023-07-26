@@ -34,7 +34,7 @@ public class daumCrawlingService {
     private final NewsRepository newsRepository;
 
     // 주기적으로 실행하는 스케줄링 메서드
-    @Scheduled(cron = "0 0 5 * * ?") // 매달 5일 마다
+    @Scheduled(cron = "0 */8 * * * ?") // 매달 5일 마다
     public void allCrwaling() { //
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
