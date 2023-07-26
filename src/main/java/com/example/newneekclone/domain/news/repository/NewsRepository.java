@@ -21,4 +21,6 @@ public interface NewsRepository extends JpaRepository<News, Long> {
     List<News> findAllByOrderByDateDesc();
 
     List<News> findByContentContainingOrderByDateDesc(String q);
+
+    List<News> findTopNOrderByDate(Long deleteCount);
 }
